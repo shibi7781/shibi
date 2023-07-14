@@ -1,0 +1,185 @@
+import java.sql.*;
+import java.util.*;
+
+class DBConnection {
+    
+    public static Connection getMysqlConnection(){
+        
+        Connection con=null;
+        try{
+            Class.forName("com.mysql.jdbc.Driver");
+            con=DriverManager.getConnection("jdbc:mysql://localhost:3306/Details","root","root");
+        }catch(Exception e){
+            System.out.println(e);
+        }return con;  
+        
+    }
+}
+
+class User {
+    
+    private int donerId;
+    private String donerName;
+    private String donerGender;
+    private long donorMobNo;
+    private String donorAddress;
+    private String donorBloodGroup;
+    private String donorFatherName;
+    private String donorMotherName;
+    
+    public void setDonorId(int donorId){
+        this.donerId=donerId; 
+    }
+    public void setDonorName(String donorName){
+        this.donerName=donerName; 
+    }
+    public void setDonorGender(String donerGender){
+        this.donerGender=donerGender; 
+    }
+    public void setDonorMobNo(long donorMobNo){
+        this.donorMobNo=donorMobNo; 
+    }
+    public void setDonorAddress(String donorAddress){
+        this.donorAddress=donorAddress; 
+    }
+    public void setDonorBloodGroup(String donorBloodGroup){
+        this.donorBloodGroup=donorBloodGroup; 
+    }
+    public void setDonorFatherName(String donorFatherName){
+        this.donorFatherName=donorFatherName; 
+    }
+    public void setDonorMotherName(String donorMotherName){
+        this.donorMotherName=donorMotherName; 
+    }
+    public int getDonorId(){
+        return donerId;
+    }
+    public String getDonorName(){
+        return donerName;
+    }
+    public String getDonerGender(){
+        return donerGender;
+    }
+    public long getDonorMobNo(){
+        return donorMobNo;
+    }
+    public String getDonorAddress(){
+        return donorAddress;
+    }
+    public String getDonorBloodGroup(){
+        return donorBloodGroup;
+    }
+    public String getDonorFatherName(){
+        return donorFatherName;
+    }
+    public String getDonorMotherName(){
+        return donorMotherName;
+    }
+}
+
+public class Dataprocessing {
+    Connection con;
+    PreparedStatement ps;
+    Statement s;
+    ResultSet rs;
+    int insRecords;
+	
+    Dataprocessing(){
+        con=DBConnection.getMysqlConnection();
+    }
+    
+    public void insRecords(User user){
+        try{
+        ps=con.prepareStatement("insert into Donor values(?,?,?,?,?,?,?,?");
+        ps.setInt(1,user.getDonorId());
+        ps.setString(2,user.getDonorName());
+        ps.setString(3,user.getDonerGender());
+        ps.setLong(4,user.getDonorMobNo());
+        ps.setString(5,user.getDonorAddress());
+        ps.setString(6,user.getDonorBloodGroup());
+        ps.setString(7,user.getDonorFatherName());
+        ps.setString(8,user.getDonorMotherName());
+        int insRecords=ps.executeUpdate();
+        System.out.println(insRecords);
+        }catch(Exception e){
+            System.out.println(e);
+        }
+    }
+    
+    public ResultSet viewData(){
+        try{
+            s=con.createStatement();
+            rs=s.executeQuery("select * from Donor");
+        }catch(Exception e){
+            System.out.println(e);
+        }return rs;
+        
+    }
+    
+}
+
+
+public class Main {
+        
+    public static void main(String args[]){
+     
+        int donerId;
+        String donerName;
+        String donerGender;
+        long donorMobNo;
+        String donorAddress;
+        String donorBloodGroup;
+        String donorFatherName;
+        String donorMotherName;
+        
+         int option;
+        
+        
+        
+        Dataprocessing dataprocess=new Dataprocessing();
+        User user=new User();
+        Scanner scan=new Scanner(System.in);
+        do{
+            System.out.println("Enter the Choice");
+            System.out.println("Insert the Donor Details");
+            System.out.println("View the Donor Details");
+            System.out.println("Exit");
+            
+            option=scan.nextInt();
+            switch(option){
+                case 1:
+                    System.out.println("Enter the Donor Id");
+                    donerId=scan.nextInt();
+                    System.out.println("Enter the Donor Name");
+                    donerName=scan.next();
+                    System.out.println("Enter the Donor Gender");
+                    donerGender=scan.next();
+                    System.out.println("Enter the Donor Mobile Number");
+                    donorMobNo=scan.nextLong();
+                    System.out.println("Enter the Donor Address");
+                    donorAddress=scan.next();
+                    System.out.println("Enter the Donor Blood Group");
+                    donorBloodGroup=scan.next();
+                    System.out.println("Enter the Donor Father Name");
+                    donorFatherName=scan.next();
+					System.out.println("Enter the Donor Mother Name");
+                    donorMotherName=scan.next();
+					dataprocess.insRecords(user);
+					break;
+					
+			  case2:
+			    
+				    Resultset rs=dataprocess.viewData();
+					while(rs.next()){
+					   System.out.println(rs.getInt(1)+rs.getString(2)+rs.getString(3)+rs.getInt(4)+rs.getString(5)+rs.getString(6)+rs.getString(7)+rs.getString(8));
+				    }break;      
+            }
+                
+        }while(option!=3){
+		
+		            System.out.println("Exit);
+		}			
+    
+    }
+    
+}
